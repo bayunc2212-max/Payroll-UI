@@ -27,20 +27,20 @@ export default function PayslipDetailPage() {
       a.download = `slip-gaji-${slip?.employeeNumber}-${slip?.periodName?.replace(/\s/g, "-")}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
-      toast.success("PDF berhasil didownload");
+      toast.success("PDF downloaded successfully");
     },
   });
 
   const emailMutation = useMutation({
     mutationFn: () => payslipApi.sendEmail(id!),
     onSuccess: () => {
-      toast.success("Email slip gaji berhasil dikirim");
+      toast.success("Payslip email sent successfully");
       qc.invalidateQueries({ queryKey: ["payslip", id] });
     },
   });
 
   if (isLoading) return <PageLoader />;
-  if (!slip) return <div className="text-center py-12 text-gray-400">Payslip tidak ditemukan</div>;
+  if (!slip) return <div className="text-center py-12 text-gray-400">Payslip not found</div>;
 
   const Row = ({ label, value, bold = false, color = "" }: any) => (
     <div className={`flex justify-between py-2 border-b border-gray-100 last:border-0 ${bold ? "font-semibold" : ""}`}>
@@ -57,7 +57,7 @@ export default function PayslipDetailPage() {
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div className="flex-1">
-          <h1 className="text-xl font-bold">Slip Gaji</h1>
+          <h1 className="text-xl font-bold">Payslip</h1>
           <p className="text-sm text-gray-500">{slip.periodName} · {slip.employeeName}</p>
         </div>
         <div className="flex gap-2">
@@ -67,7 +67,7 @@ export default function PayslipDetailPage() {
             className="btn-secondary"
           >
             {emailMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
-            {slip.emailSentAt ? "Kirim Ulang" : "Kirim Email"}
+            {slip.emailSentAt ? "Resend" : "Send Email"}
           </button>
           <button
             onClick={() => downloadMutation.mutate()}
@@ -84,7 +84,7 @@ export default function PayslipDetailPage() {
       <div className="max-w-3xl mx-auto">
         {/* Company Header */}
         <div className="bg-primary-800 text-white rounded-t-xl px-6 py-5">
-          <h2 className="text-xl font-bold">SLIP GAJI</h2>
+          <h2 className="text-xl font-bold">PAYSLIP</h2>
           <p className="text-primary-200 text-sm mt-0.5">{slip.periodName}</p>
         </div>
 
@@ -92,14 +92,14 @@ export default function PayslipDetailPage() {
           {/* Employee Info */}
           <div className="grid grid-cols-2 gap-x-8 gap-y-3">
             {[
-              ["Nama Karyawan", slip.employeeName],
-              ["No. Karyawan", slip.employeeNumber],
-              ["Jabatan", slip.positionName || "-"],
-              ["Departemen", slip.departmentName || "-"],
-              ["Status Pajak", slip.taxStatus || "-"],
+              ["Employee Name", slip.employeeName],
+              ["Employee No.", slip.employeeNumber],
+              ["Position", slip.positionName || "-"],
+              ["Department", slip.departmentName || "-"],
+              ["Tax Status", slip.taxStatus || "-"],
               ["NPWP", slip.npwp || "-"],
-              ["Rekening", slip.bankName ? `${slip.bankName} - ${slip.bankAccountNumber}` : "-"],
-              ["Tanggal Bayar", formatDate(slip.paymentDate)],
+              ["Bank Account", slip.bankName ? `${slip.bankName} - ${slip.bankAccountNumber}` : "-"],
+              ["Payment Date", formatDate(slip.paymentDate)],
             ].map(([l, v]) => (
               <div key={l}>
                 <p className="text-xs text-gray-400">{l}</p>
@@ -110,15 +110,15 @@ export default function PayslipDetailPage() {
 
           {/* Attendance */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Kehadiran</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Attendance</h3>
             <div className="grid grid-cols-6 gap-3">
               {[
-                ["Hari Kerja", slip.workingDays],
-                ["Hadir", slip.presentDays],
-                ["Sakit", slip.sickDays],
-                ["Izin", slip.permissionDays],
-                ["Alpha", slip.absentDays],
-                ["Lembur (jam)", slip.overtimeHours],
+                ["Working Days", slip.workingDays],
+                ["Present", slip.presentDays],
+                ["Sick", slip.sickDays],
+                ["Leave", slip.permissionDays],
+                ["Absent", slip.absentDays],
+                ["Overtime (hrs)", slip.overtimeHours],
               ].map(([l, v]) => (
                 <div key={l} className="bg-gray-50 rounded-lg p-3 text-center">
                   <p className="text-xs text-gray-400 mb-0.5">{l}</p>
@@ -130,43 +130,43 @@ export default function PayslipDetailPage() {
 
           {/* Pendapatan */}
           <div>
-            <h3 className="text-sm font-semibold text-primary-700 mb-2">Pendapatan</h3>
+            <h3 className="text-sm font-semibold text-primary-700 mb-2">Earnings</h3>
             <div className="bg-gray-50 rounded-lg px-4 py-2">
-              <Row label="Gaji Pokok" value={formatCurrency(slip.basicSalary)} />
-              {Number(slip.allowanceTransport) > 0 && <Row label="Tunjangan Transport" value={formatCurrency(slip.allowanceTransport)} />}
-              {Number(slip.allowanceMeal) > 0 && <Row label="Tunjangan Makan" value={formatCurrency(slip.allowanceMeal)} />}
-              {Number(slip.allowancePosition) > 0 && <Row label="Tunjangan Jabatan" value={formatCurrency(slip.allowancePosition)} />}
-              {Number(slip.allowanceOther) > 0 && <Row label="Tunjangan Lainnya" value={formatCurrency(slip.allowanceOther)} />}
-              {Number(slip.overtimePay) > 0 && <Row label="Upah Lembur" value={formatCurrency(slip.overtimePay)} />}
+              <Row label="Base Salary" value={formatCurrency(slip.basicSalary)} />
+              {Number(slip.allowanceTransport) > 0 && <Row label="Transport Allowance" value={formatCurrency(slip.allowanceTransport)} />}
+              {Number(slip.allowanceMeal) > 0 && <Row label="Meal Allowance" value={formatCurrency(slip.allowanceMeal)} />}
+              {Number(slip.allowancePosition) > 0 && <Row label="Position Allowance" value={formatCurrency(slip.allowancePosition)} />}
+              {Number(slip.allowanceOther) > 0 && <Row label="Other Allowances" value={formatCurrency(slip.allowanceOther)} />}
+              {Number(slip.overtimePay) > 0 && <Row label="Overtime Pay" value={formatCurrency(slip.overtimePay)} />}
               {Number(slip.bonus) > 0 && <Row label="Bonus" value={formatCurrency(slip.bonus)} />}
               {Number(slip.thr) > 0 && <Row label="THR" value={formatCurrency(slip.thr)} />}
-              <Row label="TOTAL PENDAPATAN BRUTO" value={formatCurrency(slip.grossSalary)} bold />
+              <Row label="TOTAL GROSS EARNINGS" value={formatCurrency(slip.grossSalary)} bold />
             </div>
           </div>
 
           {/* Potongan */}
           <div>
-            <h3 className="text-sm font-semibold text-red-600 mb-2">Potongan</h3>
+            <h3 className="text-sm font-semibold text-red-600 mb-2">Deductions</h3>
             <div className="bg-gray-50 rounded-lg px-4 py-2">
-              {Number(slip.bpjsHealthEmployee) > 0 && <Row label="BPJS Kesehatan (karyawan 1%)" value={formatCurrency(slip.bpjsHealthEmployee)} />}
+              {Number(slip.bpjsHealthEmployee) > 0 && <Row label="BPJS Kesehatan (employee 1%)" value={formatCurrency(slip.bpjsHealthEmployee)} />}
               {Number(slip.bpjsEmploymentJht) > 0 && <Row label="BPJS Ketenagakerjaan JHT (2%)" value={formatCurrency(slip.bpjsEmploymentJht)} />}
               {Number(slip.bpjsEmploymentJp) > 0 && <Row label="BPJS Ketenagakerjaan JP (1%)" value={formatCurrency(slip.bpjsEmploymentJp)} />}
               {Number(slip.pph21) > 0 && <Row label="PPh 21" value={formatCurrency(slip.pph21)} />}
-              {Number(slip.loanDeduction) > 0 && <Row label="Cicilan Pinjaman/Kasbon" value={formatCurrency(slip.loanDeduction)} />}
-              {Number(slip.otherDeduction) > 0 && <Row label="Potongan Lainnya" value={formatCurrency(slip.otherDeduction)} />}
-              <Row label="TOTAL POTONGAN" value={formatCurrency(slip.totalDeduction)} bold color="text-red-600" />
+              {Number(slip.loanDeduction) > 0 && <Row label="Loan/Cash Advance Installment" value={formatCurrency(slip.loanDeduction)} />}
+              {Number(slip.otherDeduction) > 0 && <Row label="Other Deductions" value={formatCurrency(slip.otherDeduction)} />}
+              <Row label="TOTAL DEDUCTIONS" value={formatCurrency(slip.totalDeduction)} bold color="text-red-600" />
             </div>
           </div>
 
           {/* Net Salary */}
           <div className="bg-primary-800 rounded-xl p-5 text-white text-center">
-            <p className="text-sm text-primary-200 mb-1">GAJI BERSIH (TAKE HOME PAY)</p>
+            <p className="text-sm text-primary-200 mb-1">NET SALARY (TAKE HOME PAY)</p>
             <p className="text-3xl font-bold">{formatCurrency(slip.netSalary)}</p>
           </div>
 
           {/* Kontribusi Perusahaan */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-500 mb-2">Kontribusi Perusahaan (Info)</h3>
+            <h3 className="text-sm font-semibold text-gray-500 mb-2">Company Contributions (Info)</h3>
             <div className="bg-blue-50 rounded-lg px-4 py-2 text-blue-800">
               {Number(slip.bpjsHealthCompany) > 0 && <Row label="BPJS Kesehatan (4%)" value={formatCurrency(slip.bpjsHealthCompany)} />}
               {Number(slip.bpjsEmploymentJkkCompany) > 0 && <Row label="JKK" value={formatCurrency(slip.bpjsEmploymentJkkCompany)} />}
@@ -177,7 +177,7 @@ export default function PayslipDetailPage() {
           </div>
 
           {slip.notes && (
-            <p className="text-sm text-gray-500 italic">Catatan: {slip.notes}</p>
+            <p className="text-sm text-gray-500 italic">Notes: {slip.notes}</p>
           )}
         </div>
       </div>

@@ -24,7 +24,7 @@ export default function EmployeesPage() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => employeeApi.delete(id),
     onSuccess: () => {
-      toast.success("Karyawan berhasil dinonaktifkan");
+      toast.success("Employee deactivated successfully");
       setDeleteId(null);
       qc.invalidateQueries({ queryKey: ["employees"] });
     },
@@ -36,11 +36,11 @@ export default function EmployeesPage() {
   return (
     <div>
       <PageHeader
-        title="Manajemen Karyawan"
-        subtitle={`${pagination?.total || 0} karyawan terdaftar`}
+        title="Employee Management"
+        subtitle={`${pagination?.total || 0} employees registered`}
         action={
           <Link to="/employees/new" className="btn-primary">
-            <Plus className="w-4 h-4" /> Tambah Karyawan
+            <Plus className="w-4 h-4" /> Add Employee
           </Link>
         }
       />
@@ -51,7 +51,7 @@ export default function EmployeesPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Cari nama, NIK, no. karyawan..."
+            placeholder="Search name, NIK, employee no..."
             className="input-base pl-9"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
@@ -62,11 +62,11 @@ export default function EmployeesPage() {
           value={status}
           onChange={(e) => { setStatus(e.target.value); setPage(1); }}
         >
-          <option value="">Semua Status</option>
-          <option value="active">Aktif</option>
-          <option value="inactive">Tidak Aktif</option>
-          <option value="resigned">Resign</option>
-          <option value="terminated">PHK</option>
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+          <option value="resigned">Resigned</option>
+          <option value="terminated">Terminated</option>
         </select>
       </div>
 
@@ -76,11 +76,11 @@ export default function EmployeesPage() {
           <PageLoader />
         ) : employees.length === 0 ? (
           <EmptyState
-            title="Belum ada karyawan"
-            description="Tambahkan karyawan pertama untuk memulai"
+            title="No employees yet"
+            description="Add your first employee to get started"
             action={
               <Link to="/employees/new" className="btn-primary">
-                <Plus className="w-4 h-4" /> Tambah Karyawan
+                <Plus className="w-4 h-4" /> Add Employee
               </Link>
             }
           />
@@ -90,14 +90,14 @@ export default function EmployeesPage() {
               <table className="w-full">
                 <thead>
                   <tr>
-                    <th className="table-th">No. Karyawan</th>
-                    <th className="table-th">Nama</th>
-                    <th className="table-th">Departemen</th>
-                    <th className="table-th">Jabatan</th>
-                    <th className="table-th">Bergabung</th>
-                    <th className="table-th">Gaji Pokok</th>
+                    <th className="table-th">Employee No.</th>
+                    <th className="table-th">Name</th>
+                    <th className="table-th">Department</th>
+                    <th className="table-th">Position</th>
+                    <th className="table-th">Joined</th>
+                    <th className="table-th">Base Salary</th>
                     <th className="table-th">Status</th>
-                    <th className="table-th">Aksi</th>
+                    <th className="table-th">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -144,7 +144,7 @@ export default function EmployeesPage() {
                               <button
                                 onClick={() => setDeleteId(emp.id)}
                                 className="p-1.5 hover:bg-red-50 rounded-lg"
-                                title="Nonaktifkan"
+                                title="Deactivate"
                               >
                                 <UserX className="w-4 h-4 text-red-400" />
                               </button>
@@ -170,9 +170,9 @@ export default function EmployeesPage() {
         open={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={() => deleteId && deleteMutation.mutate(deleteId)}
-        title="Nonaktifkan Karyawan"
-        description="Karyawan akan dinonaktifkan. Data tidak akan dihapus permanen."
-        confirmLabel="Nonaktifkan"
+        title="Deactivate Employee"
+        description="The employee will be deactivated. Data will not be permanently deleted."
+        confirmLabel="Deactivate"
         loading={deleteMutation.isPending}
       />
     </div>

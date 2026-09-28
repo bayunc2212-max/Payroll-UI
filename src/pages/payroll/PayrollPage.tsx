@@ -32,7 +32,7 @@ export default function PayrollPage() {
   const createMutation = useMutation({
     mutationFn: (d: any) => payrollApi.createPeriod(d),
     onSuccess: () => {
-      toast.success("Periode penggajian berhasil dibuat");
+      toast.success("Payroll period created successfully");
       setShowCreate(false);
       qc.invalidateQueries({ queryKey: ["payroll-periods"] });
     },
@@ -44,11 +44,11 @@ export default function PayrollPage() {
   return (
     <div>
       <PageHeader
-        title="Manajemen Penggajian"
-        subtitle="Kelola periode penggajian dan proses gaji karyawan"
+        title="Payroll Management"
+        subtitle="Manage payroll periods and run employee payroll"
         action={
           <button onClick={() => setShowCreate(true)} className="btn-primary">
-            <Plus className="w-4 h-4" /> Buat Periode
+            <Plus className="w-4 h-4" /> Create Period
           </button>
         }
       />
@@ -56,11 +56,11 @@ export default function PayrollPage() {
       <div className="card overflow-hidden">
         {isLoading ? <PageLoader /> : periods.length === 0 ? (
           <EmptyState
-            title="Belum ada periode penggajian"
-            description="Buat periode pertama untuk memulai proses penggajian"
+            title="No payroll periods yet"
+            description="Create your first period to start the payroll process"
             action={
               <button onClick={() => setShowCreate(true)} className="btn-primary">
-                <Plus className="w-4 h-4" /> Buat Periode
+                <Plus className="w-4 h-4" /> Create Period
               </button>
             }
           />
@@ -69,12 +69,12 @@ export default function PayrollPage() {
             <table className="w-full">
               <thead>
                 <tr>
-                  <th className="table-th">Periode</th>
-                  <th className="table-th">Tanggal Cut-off</th>
-                  <th className="table-th">Tanggal Bayar</th>
-                  <th className="table-th">Hari Kerja</th>
+                  <th className="table-th">Period</th>
+                  <th className="table-th">Cut-off Date</th>
+                  <th className="table-th">Payment Date</th>
+                  <th className="table-th">Working Days</th>
                   <th className="table-th">Status</th>
-                  <th className="table-th">Aksi</th>
+                  <th className="table-th">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -85,7 +85,7 @@ export default function PayrollPage() {
                       <td className="table-td font-medium">{p.name}</td>
                       <td className="table-td text-gray-500">{formatDateShort(p.cutOffDate)}</td>
                       <td className="table-td text-gray-500">{formatDateShort(p.paymentDate)}</td>
-                      <td className="table-td text-center">{p.workingDays} hari</td>
+                      <td className="table-td text-center">{p.workingDays} days</td>
                       <td className="table-td"><span className={statusInfo.className}>{statusInfo.label}</span></td>
                       <td className="table-td">
                         <Link to={`/payroll/${p.id}`} className="p-1.5 hover:bg-gray-100 rounded-lg inline-flex">
@@ -103,20 +103,20 @@ export default function PayrollPage() {
       </div>
 
       {/* Create Modal */}
-      <Modal open={showCreate} onClose={() => setShowCreate(false)} title="Buat Periode Penggajian" size="lg">
+      <Modal open={showCreate} onClose={() => setShowCreate(false)} title="Create Payroll Period" size="lg">
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Nama Periode *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Period Name *</label>
             <input className="input-base" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Tahun *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Year *</label>
               <input type="number" className="input-base" value={form.periodYear}
                 onChange={e => setForm(p => ({ ...p, periodYear: e.target.value }))} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Bulan *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Month *</label>
               <select className="input-base" value={form.periodMonth}
                 onChange={e => setForm(p => ({ ...p, periodMonth: e.target.value }))}>
                 {Array.from({ length: 12 }, (_, i) => (
@@ -125,35 +125,35 @@ export default function PayrollPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Tanggal Mulai *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Start Date *</label>
               <input type="date" className="input-base" value={form.startDate}
                 onChange={e => setForm(p => ({ ...p, startDate: e.target.value }))} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Tanggal Cut-off *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Cut-off Date *</label>
               <input type="date" className="input-base" value={form.cutOffDate}
                 onChange={e => setForm(p => ({ ...p, cutOffDate: e.target.value }))} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Tanggal Bayar *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Payment Date *</label>
               <input type="date" className="input-base" value={form.paymentDate}
                 onChange={e => setForm(p => ({ ...p, paymentDate: e.target.value }))} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Hari Kerja Periode</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Period Working Days</label>
               <input type="number" className="input-base" value={form.workingDays}
                 onChange={e => setForm(p => ({ ...p, workingDays: e.target.value }))} />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Catatan</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Notes</label>
             <textarea className="input-base" rows={2} value={form.notes}
               onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} />
           </div>
           <div className="flex justify-end gap-3 pt-2">
-            <button onClick={() => setShowCreate(false)} className="btn-secondary">Batal</button>
+            <button onClick={() => setShowCreate(false)} className="btn-secondary">Cancel</button>
             <button onClick={() => createMutation.mutate(form)} className="btn-primary" disabled={createMutation.isPending}>
-              {createMutation.isPending ? "Menyimpan..." : "Buat Periode"}
+              {createMutation.isPending ? "Saving..." : "Create Period"}
             </button>
           </div>
         </div>

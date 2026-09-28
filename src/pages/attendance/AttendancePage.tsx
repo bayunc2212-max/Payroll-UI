@@ -29,7 +29,7 @@ export default function AttendancePage() {
   const saveMutation = useMutation({
     mutationFn: (records: any[]) => attendanceApi.bulkUpsert(records),
     onSuccess: () => {
-      toast.success("Data absensi berhasil disimpan");
+      toast.success("Attendance data saved successfully");
       setLocalData({});
       refetch();
     },
@@ -38,7 +38,7 @@ export default function AttendancePage() {
   const saveOneMutation = useMutation({
     mutationFn: (record: any) => attendanceApi.upsert(record),
     onSuccess: (_, record: any) => {
-      toast.success(`Absensi ${record.employeeName} disimpan`);
+        toast.success(`Attendance for ${record.employeeName} saved`);
       refetch();
     },
   });
@@ -98,12 +98,12 @@ export default function AttendancePage() {
   return (
     <div>
       <PageHeader
-        title="Manajemen Absensi"
-        subtitle="Input kehadiran karyawan per periode"
+        title="Attendance Management"
+        subtitle="Enter employee attendance per period"
         action={
           <button onClick={handleSaveAll} className="btn-primary" disabled={saveMutation.isPending}>
             {saveMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            Simpan Semua
+            Save All
           </button>
         }
       />
@@ -119,11 +119,11 @@ export default function AttendancePage() {
           ))}
         </select>
         <select className="input-base w-48" value={departmentId} onChange={e => setDepartmentId(e.target.value)}>
-          <option value="">Semua Departemen</option>
+          <option value="">All Departments</option>
           {deptData?.map((d: any) => <option key={d.id} value={d.id}>{d.name}</option>)}
         </select>
         <div className="text-sm text-gray-500 flex items-center">
-          Periode: <span className="font-medium ml-1">{getMonthName(month)} {year}</span>
+          Period: <span className="font-medium ml-1">{getMonthName(month)} {year}</span>
         </div>
       </div>
 
@@ -134,20 +134,20 @@ export default function AttendancePage() {
             <table className="w-full">
               <thead>
                 <tr>
-                  <th className="table-th sticky left-0 bg-gray-50 z-10">Karyawan</th>
-                  <th className="table-th text-center">Hari Kerja</th>
-                  <th className="table-th text-center">Hadir</th>
-                  <th className="table-th text-center">Sakit</th>
-                  <th className="table-th text-center">Izin</th>
-                  <th className="table-th text-center">Alpha</th>
-                  <th className="table-th text-center">Lembur (jam)</th>
-                  <th className="table-th">Keterangan</th>
-                  <th className="table-th text-right">Aksi</th>
+                  <th className="table-th sticky left-0 bg-gray-50 z-10">Employee</th>
+                  <th className="table-th text-center">Working Days</th>
+                  <th className="table-th text-center">Present</th>
+                  <th className="table-th text-center">Sick</th>
+                  <th className="table-th text-center">Leave</th>
+                  <th className="table-th text-center">Absent</th>
+                  <th className="table-th text-center">Overtime (hours)</th>
+                  <th className="table-th">Notes</th>
+                  <th className="table-th text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {data?.employees?.length === 0 ? (
-                  <tr><td colSpan={9} className="py-12 text-center text-sm text-gray-400">Tidak ada karyawan aktif</td></tr>
+                  <tr><td colSpan={9} className="py-12 text-center text-sm text-gray-400">No active employees</td></tr>
                 ) : data?.employees?.map((emp: any) => (
                   <tr key={emp.id} className="border-t hover:bg-gray-50">
                     <td className="table-td sticky left-0 bg-white">
@@ -183,7 +183,7 @@ export default function AttendancePage() {
                         type="text"
                         value={getValue(emp, "notes", "")}
                         onChange={e => handleChange(emp.id, "notes", e.target.value)}
-                        placeholder="Opsional"
+                        placeholder="Optional"
                         className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500"
                       />
                     </td>
@@ -192,10 +192,10 @@ export default function AttendancePage() {
                         onClick={() => handleSaveOne(emp)}
                         disabled={saveOneMutation.isPending}
                         className="btn-secondary !px-3 !py-1.5 text-xs"
-                        title="Simpan absensi karyawan ini"
+                        title="Save this employee's attendance"
                       >
                         {saveOneMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-                        Simpan
+                        Save
                       </button>
                     </td>
                   </tr>

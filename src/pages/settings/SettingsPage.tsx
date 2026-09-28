@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { settingsApi, authApi } from "../../api";
 import { PageHeader, PageLoader } from "../../components/ui";
 
-const tabs = ["Profil Perusahaan", "Konfigurasi BPJS", "Konfigurasi Pajak", "Ganti Password"];
+const tabs = ["Company Profile", "BPJS Configuration", "Tax Configuration", "Change Password"];
 
 export default function SettingsPage() {
   const qc = useQueryClient();
@@ -39,17 +39,17 @@ export default function SettingsPage() {
 
   const compMutation = useMutation({
     mutationFn: (d: any) => settingsApi.updateCompany(d),
-    onSuccess: () => { toast.success("Profil perusahaan disimpan"); qc.invalidateQueries({ queryKey: ["company-profile"] }); },
+    onSuccess: () => { toast.success("Company profile saved"); qc.invalidateQueries({ queryKey: ["company-profile"] }); },
   });
 
   const bpjsMutation = useMutation({
     mutationFn: (d: any) => settingsApi.updateBpjs(d),
-    onSuccess: () => { toast.success("Konfigurasi BPJS disimpan"); qc.invalidateQueries({ queryKey: ["bpjs-config"] }); },
+    onSuccess: () => { toast.success("BPJS configuration saved"); qc.invalidateQueries({ queryKey: ["bpjs-config"] }); },
   });
 
   const taxMutation = useMutation({
     mutationFn: (d: any) => settingsApi.updateTax(d),
-    onSuccess: () => { toast.success("Konfigurasi pajak disimpan"); qc.invalidateQueries({ queryKey: ["tax-config"] }); },
+    onSuccess: () => { toast.success("Tax configuration saved"); qc.invalidateQueries({ queryKey: ["tax-config"] }); },
   });
 
   // Change Password
@@ -58,7 +58,7 @@ export default function SettingsPage() {
   const pwMutation = useMutation({
     mutationFn: (d: any) => authApi.changePassword(d),
     onSuccess: () => {
-      toast.success("Password berhasil diubah");
+      toast.success("Password changed successfully");
       setPwForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
       setPwDirty(false);
     },
@@ -66,13 +66,13 @@ export default function SettingsPage() {
 
   const handleChangePassword = () => {
     if (!pwForm.currentPassword || !pwForm.newPassword || !pwForm.confirmPassword) {
-      toast.error("Semua field wajib diisi"); return;
+      toast.error("All fields are required"); return;
     }
     if (pwForm.newPassword.length < 8) {
-      toast.error("Password baru minimal 8 karakter"); return;
+      toast.error("New password must be at least 8 characters"); return;
     }
     if (pwForm.newPassword !== pwForm.confirmPassword) {
-      toast.error("Konfirmasi password tidak sesuai"); return;
+      toast.error("Password confirmation does not match"); return;
     }
     pwMutation.mutate({ currentPassword: pwForm.currentPassword, newPassword: pwForm.newPassword });
   };
@@ -108,7 +108,7 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <PageHeader title="Pengaturan" subtitle="Konfigurasi sistem payroll" />
+      <PageHeader title="Settings" subtitle="Payroll system configuration" />
 
       <div className="border-b border-gray-200 mb-6">
         <div className="flex gap-1">
@@ -132,16 +132,16 @@ export default function SettingsPage() {
           {compLoading ? <PageLoader /> : (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <F label="Nama Perusahaan" name="name" form={compForm} setForm={setCompForm} />
+                <F label="Company Name" name="name" form={compForm} setForm={setCompForm} />
                 <F label="NPWP" name="npwp" form={compForm} setForm={setCompForm} placeholder="01.234.567.8-901.000" />
-                <F label="Telepon" name="phone" form={compForm} setForm={setCompForm} />
+                <F label="Phone" name="phone" form={compForm} setForm={setCompForm} />
                 <F label="Email" name="email" form={compForm} setForm={setCompForm} type="email" />
               </div>
-              <F label="Alamat" name="address" form={compForm} setForm={setCompForm} />
+              <F label="Address" name="address" form={compForm} setForm={setCompForm} />
               <div className="flex justify-end">
                 <button onClick={() => compMutation.mutate(compForm)} className="btn-primary" disabled={compMutation.isPending}>
                   {compMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  Simpan
+                  Save
                 </button>
               </div>
             </div>
@@ -155,8 +155,8 @@ export default function SettingsPage() {
           {bpjsLoading ? <PageLoader /> : (
             <div className="space-y-6">
               <Toggle
-                label="Aktifkan Potongan BPJS"
-                hint="Matikan agar seluruh karyawan menerima gaji tanpa potongan BPJS (bersih = bruto)."
+                label="Enable BPJS Deductions"
+                hint="Turn off so all employees receive salary without BPJS deductions (net = gross)."
                 name="applyBpjs"
                 form={bpjsForm}
                 setForm={setBpjsForm}
@@ -165,7 +165,7 @@ export default function SettingsPage() {
                 <div className="flex justify-end">
                   <button onClick={() => bpjsMutation.mutate(bpjsForm)} className="btn-primary" disabled={bpjsMutation.isPending}>
                     {bpjsMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                    Simpan
+                    Save
                   </button>
                 </div>
               ) : (
@@ -173,37 +173,37 @@ export default function SettingsPage() {
               <div>
                 <h3 className="text-sm font-semibold text-gray-700 mb-3">BPJS Kesehatan</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <F label="Iuran Karyawan (desimal, mis. 0.01 = 1%)" name="healthEmployeeRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.01" />
-                  <F label="Iuran Perusahaan (desimal, mis. 0.04 = 4%)" name="healthCompanyRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.04" />
-                  <F label="Batas Maksimum Gaji" name="healthMaxSalary" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="12000000" />
+                  <F label="Employee Contribution (decimal, e.g. 0.01 = 1%)" name="healthEmployeeRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.01" />
+                  <F label="Company Contribution (decimal, e.g. 0.04 = 4%)" name="healthCompanyRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.04" />
+                  <F label="Maximum Salary Limit" name="healthMaxSalary" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="12000000" />
                 </div>
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-gray-700 mb-3">BPJS Ketenagakerjaan - JHT</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <F label="JHT Karyawan (mis. 0.02 = 2%)" name="jhtEmployeeRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.02" />
-                  <F label="JHT Perusahaan (mis. 0.037 = 3.7%)" name="jhtCompanyRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.037" />
+                  <F label="JHT Employee (e.g. 0.02 = 2%)" name="jhtEmployeeRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.02" />
+                  <F label="JHT Company (e.g. 0.037 = 3.7%)" name="jhtCompanyRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.037" />
                 </div>
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-gray-700 mb-3">BPJS Ketenagakerjaan - JP</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <F label="JP Karyawan (mis. 0.01 = 1%)" name="jpEmployeeRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.01" />
-                  <F label="JP Perusahaan (mis. 0.02 = 2%)" name="jpCompanyRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.02" />
-                  <F label="Batas Maksimum Gaji JP" name="jpMaxSalary" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="9077600" />
+                  <F label="JP Employee (e.g. 0.01 = 1%)" name="jpEmployeeRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.01" />
+                  <F label="JP Company (e.g. 0.02 = 2%)" name="jpCompanyRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.02" />
+                  <F label="JP Maximum Salary Limit" name="jpMaxSalary" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="9077600" />
                 </div>
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">JKK & JKM (ditanggung perusahaan)</h3>
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">JKK & JKM (borne by company)</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <F label="JKK Rate (mis. 0.0024)" name="jkkRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.0024" />
-                  <F label="JKM Rate (mis. 0.003)" name="jkmRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.003" />
+                  <F label="JKK Rate (e.g. 0.0024)" name="jkkRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.0024" />
+                  <F label="JKM Rate (e.g. 0.003)" name="jkmRate" form={bpjsForm} setForm={setBpjsForm} type="number" placeholder="0.003" />
                 </div>
               </div>
               <div className="flex justify-end">
                 <button onClick={() => bpjsMutation.mutate(bpjsForm)} className="btn-primary" disabled={bpjsMutation.isPending}>
                   {bpjsMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  Simpan
+                  Save
                 </button>
               </div>
               </>
@@ -219,8 +219,8 @@ export default function SettingsPage() {
           {taxLoading ? <PageLoader /> : (
             <div className="space-y-6">
               <Toggle
-                label="Aktifkan Potongan Pajak PPh 21"
-                hint="Matikan agar seluruh karyawan menerima gaji tanpa potongan pajak (bersih = bruto)."
+                label="Enable PPh 21 Tax Deductions"
+                hint="Turn off so all employees receive salary without tax deductions (net = gross)."
                 name="applyTax"
                 form={taxForm}
                 setForm={setTaxForm}
@@ -229,41 +229,41 @@ export default function SettingsPage() {
                 <div className="flex justify-end">
                   <button onClick={() => taxMutation.mutate(taxForm)} className="btn-primary" disabled={taxMutation.isPending}>
                     {taxMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                    Simpan
+                    Save
                   </button>
                 </div>
               ) : (
               <>
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">PTKP Tahunan (Rupiah)</h3>
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">Annual PTKP (Rupiah)</h3>
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    ["ptkpTk0", "TK/0 - Tidak Kawin, 0 tanggungan"],
-                    ["ptkpTk1", "TK/1 - Tidak Kawin, 1 tanggungan"],
-                    ["ptkpTk2", "TK/2 - Tidak Kawin, 2 tanggungan"],
-                    ["ptkpTk3", "TK/3 - Tidak Kawin, 3 tanggungan"],
-                    ["ptkpK0", "K/0 - Kawin, 0 tanggungan"],
-                    ["ptkpK1", "K/1 - Kawin, 1 tanggungan"],
-                    ["ptkpK2", "K/2 - Kawin, 2 tanggungan"],
-                    ["ptkpK3", "K/3 - Kawin, 3 tanggungan"],
-                    ["ptkpHb0", "HB/0 - Penghasilan ganda, 0 tanggungan"],
-                    ["ptkpHb1", "HB/1 - Penghasilan ganda, 1 tanggungan"],
+                    ["ptkpTk0", "TK/0 - Single, 0 dependents"],
+                    ["ptkpTk1", "TK/1 - Single, 1 dependent"],
+                    ["ptkpTk2", "TK/2 - Single, 2 dependents"],
+                    ["ptkpTk3", "TK/3 - Single, 3 dependents"],
+                    ["ptkpK0", "K/0 - Married, 0 dependents"],
+                    ["ptkpK1", "K/1 - Married, 1 dependent"],
+                    ["ptkpK2", "K/2 - Married, 2 dependents"],
+                    ["ptkpK3", "K/3 - Married, 3 dependents"],
+                    ["ptkpHb0", "HB/0 - Dual income, 0 dependents"],
+                    ["ptkpHb1", "HB/1 - Dual income, 1 dependent"],
                   ].map(([name, label]) => (
                     <F key={name} label={label} name={name} form={taxForm} setForm={setTaxForm} type="number" />
                   ))}
                 </div>
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">Biaya Jabatan</h3>
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">Position Cost</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <F label="Rate Biaya Jabatan (mis. 0.05 = 5%)" name="occupationalExpenseRate" form={taxForm} setForm={setTaxForm} type="number" />
-                  <F label="Maksimum Biaya Jabatan/Tahun" name="occupationalExpenseMax" form={taxForm} setForm={setTaxForm} type="number" />
+                  <F label="Position Cost Rate (e.g. 0.05 = 5%)" name="occupationalExpenseRate" form={taxForm} setForm={setTaxForm} type="number" />
+                  <F label="Maximum Position Cost/Year" name="occupationalExpenseMax" form={taxForm} setForm={setTaxForm} type="number" />
                 </div>
               </div>
               <div className="flex justify-end">
                 <button onClick={() => taxMutation.mutate(taxForm)} className="btn-primary" disabled={taxMutation.isPending}>
                   {taxMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  Simpan
+                  Save
                 </button>
               </div>
               </>
@@ -281,13 +281,13 @@ export default function SettingsPage() {
               <KeyRound className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-800">Ganti Password</h3>
-              <p className="text-xs text-gray-500">Gunakan password baru minimal 8 karakter</p>
+              <h3 className="text-sm font-semibold text-gray-800">Change Password</h3>
+              <p className="text-xs text-gray-500">Use a new password of at least 8 characters</p>
             </div>
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Password Saat Ini *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Current Password *</label>
               <input
                 type="password"
                 className="input-base"
@@ -298,7 +298,7 @@ export default function SettingsPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Password Baru *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">New Password *</label>
                 <input
                   type="password"
                   className="input-base"
@@ -308,7 +308,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Konfirmasi Password Baru *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Confirm New Password *</label>
                 <input
                   type="password"
                   className="input-base"
@@ -319,12 +319,12 @@ export default function SettingsPage() {
               </div>
             </div>
             {pwDirty && pwForm.newPassword !== pwForm.confirmPassword && (
-              <p className="text-xs text-red-500">Konfirmasi password tidak sesuai</p>
+              <p className="text-xs text-red-500">Password confirmation does not match</p>
             )}
             <div className="flex justify-end pt-2">
               <button onClick={handleChangePassword} className="btn-primary" disabled={pwMutation.isPending}>
                 {pwMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <KeyRound className="w-4 h-4" />}
-                Ganti Password
+                Change Password
               </button>
             </div>
           </div>

@@ -48,7 +48,7 @@ api.interceptors.response.use(
       }
     }
 
-    const message = error.response?.data?.message || "Terjadi kesalahan. Silakan coba lagi.";
+    const message = error.response?.data?.message || "Something went wrong. Please try again.";
     if (error.response?.status !== 401) {
       toast.error(message);
     }

@@ -9,8 +9,8 @@ import { authApi } from "../../api";
 import { useAuthStore } from "../../store/auth.store";
 
 const loginSchema = z.object({
-  email: z.string().email("Format email tidak valid"),
-  password: z.string().min(1, "Password wajib diisi"),
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(1, "Password is required"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -30,7 +30,7 @@ export default function LoginPage() {
     try {
       const res = await authApi.login(data);
       setUser(res.data.data.user);
-      toast.success("Berhasil login!");
+      toast.success("Logged in successfully!");
       navigate("/");
     } catch {
       // Error handled by interceptor
@@ -45,8 +45,8 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4">
             <Building2 className="w-9 h-9 text-primary-700" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Sistem Payroll</h1>
-          <p className="text-primary-200 text-sm mt-1">Masuk ke panel administrasi</p>
+          <h1 className="text-2xl font-bold text-white">Payroll System</h1>
+          <p className="text-primary-200 text-sm mt-1">Sign in to the admin panel</p>
         </div>
 
         {/* Form */}
@@ -99,9 +99,9 @@ export default function LoginPage() {
               className="btn-primary w-full py-2.5"
             >
               {isSubmitting ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /> Memproses...</>
+                <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
               ) : (
-                "Masuk"
+                "Sign In"
               )}
             </button>
           </form>

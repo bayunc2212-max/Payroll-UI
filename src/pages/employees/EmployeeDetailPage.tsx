@@ -7,7 +7,7 @@ import { employeeApi } from "../../api";
 import { PageLoader, ConfirmDialog } from "../../components/ui";
 import { formatCurrency, formatDate, formatDateShort, EMPLOYEE_STATUS_MAP, TAX_STATUS_OPTIONS } from "../../utils";
 
-const tabs = ["Info Pribadi", "Gaji & BPJS", "Dokumen", "Riwayat"];
+const tabs = ["Personal Info", "Salary & BPJS", "Documents", "History"];
 
 export default function EmployeeDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -43,7 +43,7 @@ export default function EmployeeDetailPage() {
   const deleteDocMutation = useMutation({
     mutationFn: (docId: string) => employeeApi.deleteDocument(id!, docId),
     onSuccess: () => {
-      toast.success("Dokumen berhasil dihapus");
+      toast.success("Document deleted successfully");
       setDeleteDocId(null);
       qc.invalidateQueries({ queryKey: ["employee-docs", id] });
     },
@@ -58,14 +58,14 @@ export default function EmployeeDetailPage() {
     fd.append("name", file.name);
     try {
       await employeeApi.uploadDocument(id!, fd);
-      toast.success("Dokumen berhasil diupload");
+      toast.success("Document uploaded successfully");
       qc.invalidateQueries({ queryKey: ["employee-docs", id] });
     } catch {}
     e.target.value = "";
   };
 
   if (isLoading) return <PageLoader />;
-  if (!emp) return <div className="text-center py-12 text-gray-400">Karyawan tidak ditemukan</div>;
+  if (!emp) return <div className="text-center py-12 text-gray-400">Employee not found</div>;
 
   const statusInfo = EMPLOYEE_STATUS_MAP[emp.status] || { label: emp.status, className: "badge-inactive" };
   const taxLabel = TAX_STATUS_OPTIONS.find(t => t.value === emp.taxStatus)?.label || emp.taxStatus;
@@ -91,7 +91,7 @@ export default function EmployeeDetailPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">{emp.name}</h1>
-              <p className="text-sm text-gray-500">{emp.employeeNumber} · {emp.positionName || "Jabatan belum diatur"}</p>
+              <p className="text-sm text-gray-500">{emp.employeeNumber} · {emp.positionName || "Position not set"}</p>
             </div>
             <span className={statusInfo.className}>{statusInfo.label}</span>
           </div>
@@ -124,26 +124,26 @@ export default function EmployeeDetailPage() {
       {activeTab === 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="card p-5">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Data Pribadi</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Personal Data</h3>
             <dl>
               <InfoRow label="NIK" value={emp.nik} />
-              <InfoRow label="Jenis Kelamin" value={emp.gender === "male" ? "Laki-laki" : emp.gender === "female" ? "Perempuan" : null} />
-              <InfoRow label="Tempat Lahir" value={emp.birthPlace} />
-              <InfoRow label="Tanggal Lahir" value={formatDate(emp.birthDate)} />
-              <InfoRow label="Alamat" value={emp.address} />
-              <InfoRow label="No. HP" value={emp.phone} />
+              <InfoRow label="Gender" value={emp.gender === "male" ? "Male" : emp.gender === "female" ? "Female" : null} />
+              <InfoRow label="Birth Place" value={emp.birthPlace} />
+              <InfoRow label="Birth Date" value={formatDate(emp.birthDate)} />
+              <InfoRow label="Address" value={emp.address} />
+              <InfoRow label="Phone" value={emp.phone} />
               <InfoRow label="Email" value={emp.email} />
             </dl>
           </div>
           <div className="card p-5">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Data Kepegawaian</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Employment Data</h3>
             <dl>
-              <InfoRow label="Departemen" value={emp.departmentName} />
-              <InfoRow label="Jabatan" value={emp.positionName} />
-              <InfoRow label="Tanggal Masuk" value={formatDate(emp.joinDate)} />
-              <InfoRow label="Status Pernikahan" value={emp.maritalStatus} />
-              <InfoRow label="Tanggungan" value={String(emp.dependents || 0)} />
-              <InfoRow label="Status Pajak (PTKP)" value={taxLabel} />
+              <InfoRow label="Department" value={emp.departmentName} />
+              <InfoRow label="Position" value={emp.positionName} />
+              <InfoRow label="Join Date" value={formatDate(emp.joinDate)} />
+              <InfoRow label="Marital Status" value={emp.maritalStatus} />
+              <InfoRow label="Dependents" value={String(emp.dependents || 0)} />
+              <InfoRow label="Tax Status (PTKP)" value={taxLabel} />
               <InfoRow label="NPWP" value={emp.npwp} />
             </dl>
           </div>
@@ -153,29 +153,29 @@ export default function EmployeeDetailPage() {
       {activeTab === 1 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="card p-5">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Komponen Gaji</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Salary Components</h3>
             <dl>
-              <InfoRow label="Gaji Pokok" value={formatCurrency(emp.basicSalary)} />
-              <InfoRow label="Tunjangan Transport" value={formatCurrency(emp.allowanceTransport)} />
-              <InfoRow label="Tunjangan Makan" value={formatCurrency(emp.allowanceMeal)} />
-              <InfoRow label="Tunjangan Jabatan" value={formatCurrency(emp.allowancePosition)} />
-              <InfoRow label="Tunjangan Lainnya" value={formatCurrency(emp.allowanceOther)} />
-              <InfoRow label="Total Tunjangan" value={formatCurrency(
+              <InfoRow label="Base Salary" value={formatCurrency(emp.basicSalary)} />
+              <InfoRow label="Transport Allowance" value={formatCurrency(emp.allowanceTransport)} />
+              <InfoRow label="Meal Allowance" value={formatCurrency(emp.allowanceMeal)} />
+              <InfoRow label="Position Allowance" value={formatCurrency(emp.allowancePosition)} />
+              <InfoRow label="Other Allowances" value={formatCurrency(emp.allowanceOther)} />
+              <InfoRow label="Total Allowances" value={formatCurrency(
                 (Number(emp.allowanceTransport) + Number(emp.allowanceMeal) +
                  Number(emp.allowancePosition) + Number(emp.allowanceOther))
               )} />
             </dl>
           </div>
           <div className="card p-5">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">BPJS & Rekening</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">BPJS & Bank Account</h3>
             <dl>
-              <InfoRow label="BPJS Kesehatan" value={emp.isBpjsHealth ? "✅ Terdaftar" : "❌ Tidak"} />
-              <InfoRow label="No. BPJS Kesehatan" value={emp.bpjsHealthNumber} />
-              <InfoRow label="BPJS Ketenagakerjaan" value={emp.isBpjsEmployment ? "✅ Terdaftar" : "❌ Tidak"} />
-              <InfoRow label="No. BPJS Ketenagakerjaan" value={emp.bpjsEmploymentNumber} />
+              <InfoRow label="BPJS Kesehatan" value={emp.isBpjsHealth ? "✅ Registered" : "❌ No"} />
+              <InfoRow label="BPJS Kesehatan No." value={emp.bpjsHealthNumber} />
+              <InfoRow label="BPJS Ketenagakerjaan" value={emp.isBpjsEmployment ? "✅ Registered" : "❌ No"} />
+              <InfoRow label="BPJS Ketenagakerjaan No." value={emp.bpjsEmploymentNumber} />
               <InfoRow label="Bank" value={emp.bankName} />
-              <InfoRow label="No. Rekening" value={emp.bankAccountNumber} />
-              <InfoRow label="Nama Rekening" value={emp.bankAccountName} />
+              <InfoRow label="Account Number" value={emp.bankAccountNumber} />
+              <InfoRow label="Account Name" value={emp.bankAccountName} />
             </dl>
           </div>
         </div>
@@ -184,9 +184,9 @@ export default function EmployeeDetailPage() {
       {activeTab === 2 && (
         <div className="card">
           <div className="flex items-center justify-between px-5 py-4 border-b">
-            <h3 className="text-sm font-semibold text-gray-700">Dokumen Karyawan</h3>
+            <h3 className="text-sm font-semibold text-gray-700">Employee Documents</h3>
             <label className="btn-secondary cursor-pointer text-sm">
-              <Upload className="w-4 h-4" /> Upload Dokumen
+              <Upload className="w-4 h-4" /> Upload Document
               <input type="file" className="hidden" onChange={handleUpload} accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
             </label>
           </div>
@@ -194,10 +194,10 @@ export default function EmployeeDetailPage() {
             <table className="w-full">
               <thead>
                 <tr>
-                  <th className="table-th">Nama File</th>
-                  <th className="table-th">Tipe</th>
-                  <th className="table-th">Diupload</th>
-                  <th className="table-th">Aksi</th>
+                  <th className="table-th">File Name</th>
+                  <th className="table-th">Type</th>
+                  <th className="table-th">Uploaded</th>
+                  <th className="table-th">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -220,7 +220,7 @@ export default function EmployeeDetailPage() {
               </tbody>
             </table>
           ) : (
-            <div className="py-12 text-center text-sm text-gray-400">Belum ada dokumen</div>
+            <div className="py-12 text-center text-sm text-gray-400">No documents yet</div>
           )}
         </div>
       )}
@@ -229,14 +229,14 @@ export default function EmployeeDetailPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="card">
             <div className="px-5 py-4 border-b">
-              <h3 className="text-sm font-semibold text-gray-700">Riwayat Gaji</h3>
+              <h3 className="text-sm font-semibold text-gray-700">Salary History</h3>
             </div>
             {salaryHistory?.length > 0 ? (
               <table className="w-full">
                 <thead><tr>
-                  <th className="table-th">Tanggal</th>
-                  <th className="table-th">Gaji Pokok</th>
-                  <th className="table-th">Keterangan</th>
+                  <th className="table-th">Date</th>
+                  <th className="table-th">Base Salary</th>
+                  <th className="table-th">Notes</th>
                 </tr></thead>
                 <tbody>
                   {salaryHistory.map((h: any) => (
@@ -248,18 +248,18 @@ export default function EmployeeDetailPage() {
                   ))}
                 </tbody>
               </table>
-            ) : <div className="py-8 text-center text-sm text-gray-400">Belum ada riwayat</div>}
+            ) : <div className="py-8 text-center text-sm text-gray-400">No history yet</div>}
           </div>
           <div className="card">
             <div className="px-5 py-4 border-b">
-              <h3 className="text-sm font-semibold text-gray-700">Riwayat Jabatan</h3>
+              <h3 className="text-sm font-semibold text-gray-700">Position History</h3>
             </div>
             {positionHistory?.length > 0 ? (
               <table className="w-full">
                 <thead><tr>
-                  <th className="table-th">Tanggal</th>
-                  <th className="table-th">Jabatan</th>
-                  <th className="table-th">Departemen</th>
+                  <th className="table-th">Date</th>
+                  <th className="table-th">Position</th>
+                  <th className="table-th">Department</th>
                 </tr></thead>
                 <tbody>
                   {positionHistory.map((h: any) => (
@@ -271,7 +271,7 @@ export default function EmployeeDetailPage() {
                   ))}
                 </tbody>
               </table>
-            ) : <div className="py-8 text-center text-sm text-gray-400">Belum ada riwayat</div>}
+            ) : <div className="py-8 text-center text-sm text-gray-400">No history yet</div>}
           </div>
         </div>
       )}
@@ -280,8 +280,8 @@ export default function EmployeeDetailPage() {
         open={!!deleteDocId}
         onClose={() => setDeleteDocId(null)}
         onConfirm={() => deleteDocId && deleteDocMutation.mutate(deleteDocId)}
-        title="Hapus Dokumen"
-        description="Dokumen akan dihapus permanen."
+        title="Delete Document"
+        description="This document will be permanently deleted."
         loading={deleteDocMutation.isPending}
       />
     </div>

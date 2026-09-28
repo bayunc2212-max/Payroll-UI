@@ -11,13 +11,13 @@ import { cn } from "../../utils";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/employees", icon: Users, label: "Karyawan" },
-  { to: "/attendance", icon: Clock, label: "Absensi" },
-  { to: "/loans", icon: CreditCard, label: "Kasbon" },
-  { to: "/organization", icon: Network, label: "Organisasi" },
-  { to: "/payroll", icon: Banknote, label: "Penggajian" },
-  { to: "/reports", icon: FileText, label: "Laporan" },
-  { to: "/settings", icon: Settings, label: "Pengaturan" },
+  { to: "/employees", icon: Users, label: "Employees" },
+  { to: "/attendance", icon: Clock, label: "Attendance" },
+  { to: "/loans", icon: CreditCard, label: "Loans" },
+  { to: "/organization", icon: Network, label: "Organization" },
+  { to: "/payroll", icon: Banknote, label: "Payroll" },
+  { to: "/reports", icon: FileText, label: "Reports" },
+  { to: "/settings", icon: Settings, label: "Settings" },
 ];
 
 export default function AppLayout() {
@@ -31,7 +31,7 @@ export default function AppLayout() {
     } finally {
       logout();
       navigate("/login");
-      toast.success("Berhasil logout");
+      toast.success("Logged out successfully");
     }
   };
 
@@ -51,7 +51,7 @@ export default function AppLayout() {
           </div>
           {sidebarOpen && (
             <div className="overflow-hidden">
-              <p className="font-bold text-sm leading-tight truncate">Sistem Payroll</p>
+              <p className="font-bold text-sm leading-tight truncate">Payroll System</p>
               <p className="text-xs text-primary-300 truncate">Admin Panel</p>
             </div>
           )}

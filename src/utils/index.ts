@@ -39,8 +39,8 @@ export function formatDateShort(date: string | Date | null | undefined): string 
 
 export function getMonthName(month: number): string {
   const months = [
-    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-    "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
   ];
   return months[month - 1] || "";
 }
@@ -57,35 +57,35 @@ export function downloadBlob(blob: Blob, filename: string) {
 }
 
 export const TAX_STATUS_OPTIONS = [
-  { value: "TK0", label: "TK/0 - Tidak Kawin, 0 tanggungan" },
-  { value: "TK1", label: "TK/1 - Tidak Kawin, 1 tanggungan" },
-  { value: "TK2", label: "TK/2 - Tidak Kawin, 2 tanggungan" },
-  { value: "TK3", label: "TK/3 - Tidak Kawin, 3 tanggungan" },
-  { value: "K0", label: "K/0 - Kawin, 0 tanggungan" },
-  { value: "K1", label: "K/1 - Kawin, 1 tanggungan" },
-  { value: "K2", label: "K/2 - Kawin, 2 tanggungan" },
-  { value: "K3", label: "K/3 - Kawin, 3 tanggungan" },
-  { value: "HB0", label: "HB/0 - Kawin (dua penghasilan), 0 tanggungan" },
+  { value: "TK0", label: "TK/0 - Unmarried, 0 dependents" },
+  { value: "TK1", label: "TK/1 - Unmarried, 1 dependent" },
+  { value: "TK2", label: "TK/2 - Unmarried, 2 dependents" },
+  { value: "TK3", label: "TK/3 - Unmarried, 3 dependents" },
+  { value: "K0", label: "K/0 - Married, 0 dependents" },
+  { value: "K1", label: "K/1 - Married, 1 dependent" },
+  { value: "K2", label: "K/2 - Married, 2 dependents" },
+  { value: "K3", label: "K/3 - Married, 3 dependents" },
+  { value: "HB0", label: "HB/0 - Married (dual income), 0 dependents" },
 ];
 
 export const EMPLOYEE_STATUS_MAP: Record<string, { label: string; className: string }> = {
-  active: { label: "Aktif", className: "badge-active" },
-  inactive: { label: "Tidak Aktif", className: "badge-inactive" },
-  resigned: { label: "Resign", className: "badge-danger" },
-  terminated: { label: "PHK", className: "badge-danger" },
+  active: { label: "Active", className: "badge-active" },
+  inactive: { label: "Inactive", className: "badge-inactive" },
+  resigned: { label: "Resigned", className: "badge-danger" },
+  terminated: { label: "Terminated", className: "badge-danger" },
 };
 
 export const LOAN_STATUS_MAP: Record<string, { label: string; className: string }> = {
-  pending: { label: "Menunggu", className: "badge-pending" },
-  approved: { label: "Disetujui", className: "badge-active" },
-  rejected: { label: "Ditolak", className: "badge-danger" },
-  ongoing: { label: "Aktif", className: "badge-active" },
-  paid_off: { label: "Lunas", className: "badge-inactive" },
+  pending: { label: "Pending", className: "badge-pending" },
+  approved: { label: "Approved", className: "badge-active" },
+  rejected: { label: "Rejected", className: "badge-danger" },
+  ongoing: { label: "Active", className: "badge-active" },
+  paid_off: { label: "Paid Off", className: "badge-inactive" },
 };
 
 export const PERIOD_STATUS_MAP: Record<string, { label: string; className: string }> = {
   draft: { label: "Draft", className: "badge-inactive" },
-  processing: { label: "Memproses", className: "badge-pending" },
-  processed: { label: "Diproses", className: "badge-active" },
-  finalized: { label: "Final", className: "badge-active" },
+  processing: { label: "Processing", className: "badge-pending" },
+  processed: { label: "Processed", className: "badge-active" },
+  finalized: { label: "Finalized", className: "badge-active" },
 };

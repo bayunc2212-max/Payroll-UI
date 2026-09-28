@@ -41,7 +41,7 @@ export default function EmployeeFormPage() {
       ? employeeApi.update(id!, data)
       : employeeApi.create(data),
     onSuccess: (res) => {
-      toast.success(isEdit ? "Data karyawan berhasil diperbarui" : "Karyawan berhasil ditambahkan");
+      toast.success(isEdit ? "Employee data updated successfully" : "Employee added successfully");
       qc.invalidateQueries({ queryKey: ["employees"] });
       navigate(`/employees/${isEdit ? id : res.data.data.id}`);
     },
@@ -67,79 +67,79 @@ export default function EmployeeFormPage() {
         <Link to={isEdit ? `/employees/${id}` : "/employees"} className="p-1.5 hover:bg-gray-100 rounded-lg">
           <ArrowLeft className="w-5 h-5" />
         </Link>
-        <h1 className="text-xl font-bold">{isEdit ? "Edit Karyawan" : "Tambah Karyawan Baru"}</h1>
+        <h1 className="text-xl font-bold">{isEdit ? "Edit Employee" : "Add New Employee"}</h1>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Identitas */}
         <div className="card p-5">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4">Identitas Karyawan</h3>
+          <h3 className="text-sm font-semibold text-gray-700 mb-4">Employee Identity</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Field label="NIK" required error={errors.nik?.message}>
-              <input {...register("nik", { required: "NIK wajib diisi" })} className="input-base" placeholder="3271234567890001" />
+              <input {...register("nik", { required: "NIK is required" })} className="input-base" placeholder="3271234567890001" />
             </Field>
-            <Field label="No. Karyawan" required error={errors.employeeNumber?.message}>
-              <input {...register("employeeNumber", { required: "No. karyawan wajib diisi" })} className="input-base" placeholder="EMP001" />
+            <Field label="Employee No." required error={errors.employeeNumber?.message}>
+              <input {...register("employeeNumber", { required: "Employee no. is required" })} className="input-base" placeholder="EMP001" />
             </Field>
-            <Field label="Nama Lengkap" required error={errors.name?.message}>
-              <input {...register("name", { required: "Nama wajib diisi" })} className="input-base" placeholder="Nama lengkap karyawan" />
+            <Field label="Full Name" required error={errors.name?.message}>
+              <input {...register("name", { required: "Name is required" })} className="input-base" placeholder="Employee full name" />
             </Field>
-            <Field label="Jenis Kelamin">
+            <Field label="Gender">
               <select {...register("gender")} className="input-base">
-                <option value="">-- Pilih --</option>
-                <option value="male">Laki-laki</option>
-                <option value="female">Perempuan</option>
+                <option value="">-- Select --</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
               </select>
             </Field>
-            <Field label="Tempat Lahir">
+            <Field label="Birth Place">
               <input {...register("birthPlace")} className="input-base" placeholder="Jakarta" />
             </Field>
-            <Field label="Tanggal Lahir">
+            <Field label="Birth Date">
               <input {...register("birthDate")} type="date" className="input-base" />
             </Field>
-            <Field label="No. HP">
+            <Field label="Phone">
               <input {...register("phone")} className="input-base" placeholder="081234567890" />
             </Field>
             <Field label="Email">
-              <input {...register("email")} type="email" className="input-base" placeholder="email@contoh.com" />
+              <input {...register("email")} type="email" className="input-base" placeholder="email@example.com" />
             </Field>
-            <Field label="Alamat">
-              <input {...register("address")} className="input-base" placeholder="Alamat lengkap" />
+            <Field label="Address">
+              <input {...register("address")} className="input-base" placeholder="Full address" />
             </Field>
           </div>
         </div>
 
         {/* Kepegawaian */}
         <div className="card p-5">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4">Data Kepegawaian</h3>
+          <h3 className="text-sm font-semibold text-gray-700 mb-4">Employment Data</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Field label="Departemen">
+            <Field label="Department">
               <select {...register("departmentId")} className="input-base">
-                <option value="">-- Pilih Departemen --</option>
+                <option value="">-- Select Department --</option>
                 {deptData?.map((d: any) => <option key={d.id} value={d.id}>{d.name}</option>)}
               </select>
             </Field>
-            <Field label="Jabatan">
+            <Field label="Position">
               <select {...register("positionId")} className="input-base">
-                <option value="">-- Pilih Jabatan --</option>
+                <option value="">-- Select Position --</option>
                 {posData?.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
             </Field>
-            <Field label="Tanggal Masuk" required error={errors.joinDate?.message}>
-              <input {...register("joinDate", { required: "Tanggal masuk wajib diisi" })} type="date" className="input-base" />
+            <Field label="Join Date" required error={errors.joinDate?.message}>
+              <input {...register("joinDate", { required: "Join date is required" })} type="date" className="input-base" />
             </Field>
-            <Field label="Status Pernikahan">
+            <Field label="Marital Status">
               <select {...register("maritalStatus")} className="input-base">
-                <option value="single">Belum Kawin</option>
-                <option value="married">Kawin</option>
-                <option value="divorced">Cerai Hidup</option>
-                <option value="widowed">Cerai Mati</option>
+                <option value="single">Single</option>
+                <option value="married">Married</option>
+                <option value="divorced">Divorced</option>
+                <option value="widowed">Widowed</option>
               </select>
             </Field>
-            <Field label="Jumlah Tanggungan">
+            <Field label="Number of Dependents">
               <input {...register("dependents")} type="number" min="0" max="3" className="input-base" defaultValue={0} />
             </Field>
-            <Field label="Status Pajak (PTKP)">
+            <Field label="Tax Status (PTKP)">
               <select {...register("taxStatus")} className="input-base">
                 {TAX_STATUS_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.value} - {t.label.split(' - ')[1]}</option>)}
               </select>
@@ -152,21 +152,21 @@ export default function EmployeeFormPage() {
 
         {/* Gaji */}
         <div className="card p-5">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4">Komponen Gaji</h3>
+          <h3 className="text-sm font-semibold text-gray-700 mb-4">Salary Components</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Field label="Gaji Pokok" required error={errors.basicSalary?.message}>
-              <input {...register("basicSalary", { required: "Gaji pokok wajib diisi" })} type="number" className="input-base" placeholder="5000000" />
+            <Field label="Base Salary" required error={errors.basicSalary?.message}>
+              <input {...register("basicSalary", { required: "Base salary is required" })} type="number" className="input-base" placeholder="5000000" />
             </Field>
-            <Field label="Tunjangan Transport">
+            <Field label="Transport Allowance">
               <input {...register("allowanceTransport")} type="number" className="input-base" placeholder="0" defaultValue={0} />
             </Field>
-            <Field label="Tunjangan Makan">
+            <Field label="Meal Allowance">
               <input {...register("allowanceMeal")} type="number" className="input-base" placeholder="0" defaultValue={0} />
             </Field>
-            <Field label="Tunjangan Jabatan">
+            <Field label="Position Allowance">
               <input {...register("allowancePosition")} type="number" className="input-base" placeholder="0" defaultValue={0} />
             </Field>
-            <Field label="Tunjangan Lainnya">
+            <Field label="Other Allowances">
               <input {...register("allowanceOther")} type="number" className="input-base" placeholder="0" defaultValue={0} />
             </Field>
           </div>
@@ -178,16 +178,16 @@ export default function EmployeeFormPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex items-center gap-3">
               <input {...register("isBpjsHealth")} type="checkbox" id="bpjsHealth" className="w-4 h-4" defaultChecked />
-              <label htmlFor="bpjsHealth" className="text-sm text-gray-700">Daftarkan BPJS Kesehatan</label>
+              <label htmlFor="bpjsHealth" className="text-sm text-gray-700">Enroll in BPJS Kesehatan</label>
             </div>
-            <Field label="No. BPJS Kesehatan">
+            <Field label="BPJS Kesehatan No.">
               <input {...register("bpjsHealthNumber")} className="input-base" />
             </Field>
             <div className="flex items-center gap-3">
               <input {...register("isBpjsEmployment")} type="checkbox" id="bpjsEmploy" className="w-4 h-4" defaultChecked />
-              <label htmlFor="bpjsEmploy" className="text-sm text-gray-700">Daftarkan BPJS Ketenagakerjaan</label>
+              <label htmlFor="bpjsEmploy" className="text-sm text-gray-700">Enroll in BPJS Ketenagakerjaan</label>
             </div>
-            <Field label="No. BPJS Ketenagakerjaan">
+            <Field label="BPJS Ketenagakerjaan No.">
               <input {...register("bpjsEmploymentNumber")} className="input-base" />
             </Field>
           </div>
@@ -195,15 +195,15 @@ export default function EmployeeFormPage() {
 
         {/* Bank */}
         <div className="card p-5">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4">Rekening Bank</h3>
+          <h3 className="text-sm font-semibold text-gray-700 mb-4">Bank Account</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Field label="Nama Bank">
-              <input {...register("bankName")} className="input-base" placeholder="BCA, Mandiri, BNI, dll." />
+            <Field label="Bank Name">
+              <input {...register("bankName")} className="input-base" placeholder="BCA, Mandiri, BNI, etc." />
             </Field>
-            <Field label="No. Rekening">
+            <Field label="Account Number">
               <input {...register("bankAccountNumber")} className="input-base" placeholder="1234567890" />
             </Field>
-            <Field label="Nama Pemilik Rekening">
+            <Field label="Account Holder Name">
               <input {...register("bankAccountName")} className="input-base" />
             </Field>
           </div>
@@ -212,12 +212,12 @@ export default function EmployeeFormPage() {
         {/* Actions */}
         <div className="flex justify-end gap-3">
           <Link to={isEdit ? `/employees/${id}` : "/employees"} className="btn-secondary">
-            Batal
+            Cancel
           </Link>
           <button type="submit" className="btn-primary" disabled={isSubmitting || mutation.isPending}>
             {(isSubmitting || mutation.isPending) ? (
-              <><Loader2 className="w-4 h-4 animate-spin" /> Menyimpan...</>
-            ) : (isEdit ? "Simpan Perubahan" : "Tambah Karyawan")}
+              <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
+            ) : (isEdit ? "Save Changes" : "Add Employee")}
           </button>
         </div>
       </form>

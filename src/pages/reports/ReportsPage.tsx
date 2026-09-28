@@ -33,7 +33,7 @@ export default function ReportsPage() {
 
   const handleOpenView = (type: "rekap" | "loans") => {
     if (type === "rekap" && !selectedPeriod) {
-      toast.error("Pilih periode terlebih dahulu");
+      toast.error("Select a period first");
       return;
     }
     setViewType(type);
@@ -43,7 +43,7 @@ export default function ReportsPage() {
 
   const handleExport = async (type: string) => {
     if (!selectedPeriod) {
-      toast.error("Pilih periode terlebih dahulu");
+      toast.error("Select a period first");
       return;
     }
 
@@ -72,10 +72,10 @@ export default function ReportsPage() {
 
       if (res) {
         downloadBlob(new Blob([res.data]), filename);
-        toast.success("Laporan berhasil didownload");
+        toast.success("Report downloaded successfully");
       }
     } catch {
-      toast.error("Gagal mengunduh laporan");
+      toast.error("Failed to download report");
     }
   };
 
@@ -83,39 +83,39 @@ export default function ReportsPage() {
     try {
       const res = await reportApi.exportLoansExcel();
       downloadBlob(new Blob([res.data]), "laporan-kasbon.xlsx");
-      toast.success("Laporan kasbon berhasil didownload");
+      toast.success("Loan report downloaded successfully");
     } catch {
-      toast.error("Gagal mengunduh laporan");
+      toast.error("Failed to download report");
     }
   };
 
   const reports = [
-    { id: "rekap", title: "Rekap Gaji", description: "Daftar gaji lengkap semua karyawan per periode", icon: "💰" },
-    { id: "bpjs", title: "Laporan BPJS", description: "Iuran BPJS Kesehatan dan Ketenagakerjaan per periode", icon: "🏥" },
-    { id: "pph21", title: "Bukti Potong PPh 21", description: "Data pemotongan PPh 21 karyawan per periode", icon: "📋" },
-    { id: "overtime", title: "Laporan Lembur", description: "Data jam dan upah lembur karyawan per periode", icon: "⏰" },
+    { id: "rekap", title: "Salary Recap", description: "Complete salary list for all employees per period", icon: "💰" },
+    { id: "bpjs", title: "BPJS Report", description: "BPJS Health and Employment contributions per period", icon: "🏥" },
+    { id: "pph21", title: "PPh 21 Withholding Evidence", description: "Employee PPh 21 withholding data per period", icon: "📋" },
+    { id: "overtime", title: "Overtime Report", description: "Employee overtime hours and pay per period", icon: "⏰" },
   ];
 
   return (
     <div>
-      <PageHeader title="Laporan" subtitle="Export laporan penggajian dalam format Excel" />
+      <PageHeader title="Reports" subtitle="Export payroll reports in Excel format" />
 
       {/* Period Selector */}
       <div className="card p-5 mb-6">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">Pilih Periode</h3>
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">Select Period</h3>
         <div className="flex gap-3 items-center">
           <select
             className="input-base w-64"
             value={selectedPeriod}
             onChange={e => setSelectedPeriod(e.target.value)}
           >
-            <option value="">-- Pilih Periode --</option>
+            <option value="">-- Select Period --</option>
             {finishedPeriods.map((p: any) => (
               <option key={p.id} value={p.id}>{p.name}</option>
             ))}
           </select>
           {finishedPeriods.length === 0 && (
-            <p className="text-sm text-gray-400">Belum ada periode yang difinalisasi</p>
+            <p className="text-sm text-gray-400">No finalized periods yet</p>
           )}
         </div>
       </div>
@@ -136,7 +136,7 @@ export default function ReportsPage() {
                 className="btn-secondary disabled:opacity-40"
               >
                 <Eye className="w-4 h-4" />
-                Lihat
+                View
               </button>
             )}
             <button
@@ -155,12 +155,12 @@ export default function ReportsPage() {
       <div className="card p-5 flex items-center gap-4">
         <div className="text-3xl">💳</div>
         <div className="flex-1">
-          <h3 className="text-sm font-semibold text-gray-800">Laporan Kasbon & Pinjaman</h3>
-          <p className="text-xs text-gray-500 mt-0.5">Rekap semua data pinjaman dan status cicilan karyawan</p>
+          <h3 className="text-sm font-semibold text-gray-800">Cash Advance & Loan Report</h3>
+          <p className="text-xs text-gray-500 mt-0.5">Recap of all loan data and employee installment status</p>
         </div>
         <button onClick={() => handleOpenView("loans")} className="btn-secondary">
           <Eye className="w-4 h-4" />
-          Lihat
+          View
         </button>
         <button onClick={handleExportLoans} className="btn-secondary">
           <FileSpreadsheet className="w-4 h-4" />
@@ -169,21 +169,21 @@ export default function ReportsPage() {
       </div>
 
       {/* View Rekap Modal */}
-      <Modal open={viewType === "rekap"} onClose={() => setViewType(null)} title={`Rekap Gaji - ${rekapData?.period?.name || ""}`} size="xl">
+      <Modal open={viewType === "rekap"} onClose={() => setViewType(null)} title={`Salary Recap - ${rekapData?.period?.name || ""}`} size="xl">
         {rekapLoading ? <PageLoader /> : !rekapData?.payslips?.length ? (
-          <div className="py-12 text-center text-sm text-gray-400">Belum ada data payslip untuk periode ini</div>
+          <div className="py-12 text-center text-sm text-gray-400">No payslip data for this period</div>
         ) : (
           <div className="overflow-x-auto max-h-[60vh] overflow-y-auto">
             <table className="w-full">
               <thead className="sticky top-0">
                 <tr>
-                  <th className="table-th">No. Karyawan</th>
-                  <th className="table-th">Nama</th>
-                  <th className="table-th">Departemen</th>
-                  <th className="table-th text-right">Bruto</th>
-                  <th className="table-th text-right">Potongan</th>
+                  <th className="table-th">Employee No.</th>
+                  <th className="table-th">Name</th>
+                  <th className="table-th">Department</th>
+                  <th className="table-th text-right">Gross</th>
+                  <th className="table-th text-right">Deductions</th>
                   <th className="table-th text-right">PPh 21</th>
-                  <th className="table-th text-right">Bersih</th>
+                  <th className="table-th text-right">Net</th>
                 </tr>
               </thead>
               <tbody>
@@ -205,20 +205,20 @@ export default function ReportsPage() {
       </Modal>
 
       {/* View Loans Modal */}
-      <Modal open={viewType === "loans"} onClose={() => setViewType(null)} title="Laporan Kasbon & Pinjaman" size="xl">
+      <Modal open={viewType === "loans"} onClose={() => setViewType(null)} title="Cash Advance & Loan Report" size="xl">
         {loansLoading ? <PageLoader /> : !loanReportData?.length ? (
-          <div className="py-12 text-center text-sm text-gray-400">Belum ada data pinjaman</div>
+          <div className="py-12 text-center text-sm text-gray-400">No loan data yet</div>
         ) : (
           <div className="overflow-x-auto max-h-[60vh] overflow-y-auto">
             <table className="w-full">
               <thead className="sticky top-0">
                 <tr>
-                  <th className="table-th">Karyawan</th>
-                  <th className="table-th text-right">Jumlah</th>
-                  <th className="table-th text-right">Cicilan/Bln</th>
-                  <th className="table-th text-center">Terbayar</th>
-                  <th className="table-th text-right">Sisa</th>
-                  <th className="table-th">Mulai</th>
+                  <th className="table-th">Employee</th>
+                  <th className="table-th text-right">Amount</th>
+                  <th className="table-th text-right">Installment/Mo</th>
+                  <th className="table-th text-center">Paid</th>
+                  <th className="table-th text-right">Remaining</th>
+                  <th className="table-th">Start</th>
                   <th className="table-th">Status</th>
                 </tr>
               </thead>

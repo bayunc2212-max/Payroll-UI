@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { departmentApi, positionApi } from "../../api";
 import { PageHeader, PageLoader, EmptyState, Modal, ConfirmDialog } from "../../components/ui";
 
-const tabs = ["Departemen", "Jabatan"];
+const tabs = ["Departments", "Positions"];
 
 export default function OrganizationPage() {
   const qc = useQueryClient();
@@ -64,7 +64,7 @@ export default function OrganizationPage() {
       ? departmentApi.update(editing.id, d).then(r => r.data.data)
       : departmentApi.create(d).then(r => r.data.data),
     onSuccess: () => {
-      toast.success(editing ? "Departemen berhasil diperbarui" : "Departemen berhasil dibuat");
+      toast.success(editing ? "Department updated successfully" : "Department created successfully");
       setShowModal(false);
       qc.invalidateQueries({ queryKey: ["departments"] });
     },
@@ -75,7 +75,7 @@ export default function OrganizationPage() {
       ? positionApi.update(editing.id, d).then(r => r.data.data)
       : positionApi.create(d).then(r => r.data.data),
     onSuccess: () => {
-      toast.success(editing ? "Jabatan berhasil diperbarui" : "Jabatan berhasil dibuat");
+      toast.success(editing ? "Position updated successfully" : "Position created successfully");
       setShowModal(false);
       qc.invalidateQueries({ queryKey: ["positions"] });
     },
@@ -84,7 +84,7 @@ export default function OrganizationPage() {
   const deleteDeptMutation = useMutation({
     mutationFn: (id: string) => departmentApi.delete(id),
     onSuccess: () => {
-      toast.success("Departemen berhasil dihapus");
+      toast.success("Department deleted successfully");
       setDeleteId(null);
       qc.invalidateQueries({ queryKey: ["departments"] });
     },
@@ -93,7 +93,7 @@ export default function OrganizationPage() {
   const deletePosMutation = useMutation({
     mutationFn: (id: string) => positionApi.delete(id),
     onSuccess: () => {
-      toast.success("Jabatan berhasil dihapus");
+      toast.success("Position deleted successfully");
       setDeleteId(null);
       qc.invalidateQueries({ queryKey: ["positions"] });
     },
@@ -101,13 +101,13 @@ export default function OrganizationPage() {
 
   const handleSubmit = () => {
     if (!form.name.trim()) {
-      toast.error("Nama wajib diisi");
+      toast.error("Name is required");
       return;
     }
     if (activeTab === 0) deptMutation.mutate({ ...form });
     else {
       if (!form.departmentId) {
-        toast.error("Pilih departemen terlebih dahulu");
+        toast.error("Please select a department first");
         return;
       }
       posMutation.mutate({ ...form });
@@ -124,11 +124,11 @@ export default function OrganizationPage() {
   return (
     <div>
       <PageHeader
-        title="Organisasi"
-        subtitle="Kelola departemen dan jabatan perusahaan"
+        title="Organization"
+        subtitle="Manage company departments and positions"
         action={
           <button onClick={openCreate} className="btn-primary">
-            <Plus className="w-4 h-4" /> Tambah {activeTab === 0 ? "Departemen" : "Jabatan"}
+            <Plus className="w-4 h-4" /> Add {activeTab === 0 ? "Department" : "Position"}
           </button>
         }
       />
@@ -154,28 +154,28 @@ export default function OrganizationPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
-            placeholder={activeTab === 0 ? "Cari departemen..." : "Cari jabatan..."}
+            placeholder={activeTab === 0 ? "Search departments..." : "Search positions..."}
             className="input-base pl-9"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
         </div>
         <div className="text-sm text-gray-500 flex items-center">
-          {activeTab === 0 ? `${filteredDepts.length} departemen` : `${filteredPos.length} jabatan`}
+          {activeTab === 0 ? `${filteredDepts.length} departments` : `${filteredPos.length} positions`}
         </div>
       </div>
 
       {activeTab === 0 && (
         <div className="card overflow-hidden">
           {deptLoading ? <PageLoader /> : filteredDepts.length === 0 ? (
-            <EmptyState title="Belum ada departemen" description="Tambahkan departemen untuk struktur organisasi" />
+            <EmptyState title="No departments yet" description="Add departments to build the organization structure" />
           ) : (
             <table className="w-full">
               <thead>
                 <tr>
-                  <th className="table-th">Nama</th>
-                  <th className="table-th">Deskripsi</th>
-                  <th className="table-th text-right">Aksi</th>
+                  <th className="table-th">Name</th>
+                  <th className="table-th">Description</th>
+                  <th className="table-th text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -188,7 +188,7 @@ export default function OrganizationPage() {
                         <button onClick={() => openEdit(d)} className="p-1.5 hover:bg-gray-100 rounded-lg" title="Edit">
                           <Pencil className="w-4 h-4 text-gray-500" />
                         </button>
-                        <button onClick={() => setDeleteId(d.id)} className="p-1.5 hover:bg-red-50 rounded-lg" title="Hapus">
+                        <button onClick={() => setDeleteId(d.id)} className="p-1.5 hover:bg-red-50 rounded-lg" title="Delete">
                           <Trash2 className="w-4 h-4 text-red-400" />
                         </button>
                       </div>
@@ -204,15 +204,15 @@ export default function OrganizationPage() {
       {activeTab === 1 && (
         <div className="card overflow-hidden">
           {posLoading ? <PageLoader /> : filteredPos.length === 0 ? (
-            <EmptyState title="Belum ada jabatan" description="Tambahkan jabatan untuk struktur organisasi" />
+            <EmptyState title="No positions yet" description="Add positions to build the organization structure" />
           ) : (
             <table className="w-full">
               <thead>
                 <tr>
-                  <th className="table-th">Nama</th>
-                  <th className="table-th">Departemen</th>
-                  <th className="table-th">Deskripsi</th>
-                  <th className="table-th text-right">Aksi</th>
+                  <th className="table-th">Name</th>
+                  <th className="table-th">Department</th>
+                  <th className="table-th">Description</th>
+                  <th className="table-th text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -226,7 +226,7 @@ export default function OrganizationPage() {
                         <button onClick={() => openEdit(p)} className="p-1.5 hover:bg-gray-100 rounded-lg" title="Edit">
                           <Pencil className="w-4 h-4 text-gray-500" />
                         </button>
-                        <button onClick={() => setDeleteId(p.id)} className="p-1.5 hover:bg-red-50 rounded-lg" title="Hapus">
+                        <button onClick={() => setDeleteId(p.id)} className="p-1.5 hover:bg-red-50 rounded-lg" title="Delete">
                           <Trash2 className="w-4 h-4 text-red-400" />
                         </button>
                       </div>
@@ -240,32 +240,32 @@ export default function OrganizationPage() {
       )}
 
       {/* Create / Edit Modal */}
-      <Modal open={showModal} onClose={() => setShowModal(false)} title={editing ? `Edit ${activeTab === 0 ? "Departemen" : "Jabatan"}` : `Tambah ${activeTab === 0 ? "Departemen" : "Jabatan"}`} size="md">
+      <Modal open={showModal} onClose={() => setShowModal(false)} title={editing ? `Edit ${activeTab === 0 ? "Department" : "Position"}` : `Add ${activeTab === 0 ? "Department" : "Position"}`} size="md">
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Nama *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Name *</label>
             <input
               className="input-base"
               value={form.name}
               onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-              placeholder={activeTab === 0 ? "Contoh: Finance" : "Contoh: Staff Finance"}
+              placeholder={activeTab === 0 ? "e.g. Finance" : "e.g. Finance Staff"}
             />
           </div>
           {activeTab === 1 && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Departemen *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Department *</label>
               <select
                 className="input-base"
                 value={form.departmentId}
                 onChange={e => setForm(p => ({ ...p, departmentId: e.target.value }))}
               >
-                <option value="">-- Pilih Departemen --</option>
+                <option value="">-- Select Department --</option>
                 {deptList.map((d: any) => <option key={d.id} value={d.id}>{d.name}</option>)}
               </select>
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Deskripsi</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Description</label>
             <textarea
               className="input-base"
               rows={2}
@@ -274,10 +274,10 @@ export default function OrganizationPage() {
             />
           </div>
           <div className="flex justify-end gap-3 pt-2">
-            <button onClick={() => setShowModal(false)} className="btn-secondary">Batal</button>
+            <button onClick={() => setShowModal(false)} className="btn-secondary">Cancel</button>
             <button onClick={handleSubmit} className="btn-primary" disabled={deptMutation.isPending || posMutation.isPending}>
               {(deptMutation.isPending || posMutation.isPending) ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-              Simpan
+              Save
             </button>
           </div>
         </div>
@@ -287,9 +287,9 @@ export default function OrganizationPage() {
         open={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={() => deleteId && (activeTab === 0 ? deleteDeptMutation.mutate(deleteId) : deletePosMutation.mutate(deleteId))}
-        title={`Hapus ${activeTab === 0 ? "Departemen" : "Jabatan"}`}
-        description={`${activeTab === 0 ? "Departemen" : "Jabatan"} akan dihapus permanen. Departemen/jabatan yang masih dipakai karyawan tidak bisa dihapus.`}
-        confirmLabel="Hapus"
+        title={`Delete ${activeTab === 0 ? "Department" : "Position"}`}
+        description={`This ${activeTab === 0 ? "department" : "position"} will be permanently deleted. Departments/positions still in use by employees cannot be deleted.`}
+        confirmLabel="Delete"
         loading={deleteDeptMutation.isPending || deletePosMutation.isPending}
       />
     </div>
